@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= category %> Products</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <h1><%= category %> Products</h1>
+  <a href="/">← Back to Home</a>
+
+  <div class="product-container">
+    <% if (products.length === 0) { %>
+      <p>No products in this category.</p>
+    <% } else { %>
+      <% products.forEach(product => { %>
+        <div class="product-card">
+          <img src="/uploads/<%= product.image %>" alt="<%= product.title %>">
+          <h3><%= product.title %></h3>
+          <p>₹<%= product.price %></p>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
+</body>
+</html>

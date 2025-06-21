@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Profile</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <style>
+    .order-card {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px 0;
+      background: #f9f9f9;
+    }
+    .order-card ul {
+      margin-left: 20px;
+    }
+    .status.processing { color: orange; font-weight: bold; }
+    .status.shipped { color: blue; font-weight: bold; }
+    .status.delivered { color: green; font-weight: bold; }
+    .status.rejected { color: red; font-weight: bold; }
+    .status.accepted { color: darkgreen; font-weight: bold; }
+    .cancel-btn {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Hello, <%= currentUser.username %>!</h1>
+    <a href="/">🏠 Home</a>
+    <a href="/logout">🚪 Logout</a>
+  </header>
+
+  <main>
+    <h2>🛒 Your Cart</h2>
+    <% if (Object.keys(cart).length === 0) { %>
+      <p>Your cart is empty.</p>
+    <% } else { %>
+      <ul>
+        <% for (let productId in cart) { %>
+          <li>🛍️ Product ID: <%= productId %> — Quantity: <%= cart[productId] %></li>
+        <% } %>
+      </ul>
+    <% } %>
+
+    <h2>📦 Your Orders & Tracking</h2>
+    <% if (orders.length === 0) { %>
+      <p>No orders placed yet.</p>
+    <% } else { %>
+      <% orders.forEach(order => { %>
+        <div class="order-card">
+          <p><strong>Order ID:</strong> <%= order._id %></p>
+          <p><strong>Placed on:</strong> <%= order.orderedAt.toLocaleString() %></p>
+          <p><strong>Total:</strong> ₹<%= order.totalAmount %></p>
+
+          <p><strong>Status:</strong>
+            <span class="status <%= order.orderStatus %>">
+              <% if (order.orderStatus === 'processing') { %>⏳ Processing<% } %>
+              <% if (order.orderStatus === 'accepted') { %>✅ Accepted<% } %>
+              <% if (order.orderStatus === 'rejected') { %>❌ Rejected<% } %>
+              <% if (order.orderStatus === 'shipped') { %>🚚 Shipped<% } %>
+              <% if (order.orderStatus === 'delivered') { %>📦 Delivered<% } %>
+            </span>
+          </p>
+
+          <% if (order.deliveryEstimate) { %>
+            <p><strong>Estimated Delivery:</strong> <%= order.deliveryEstimate %></p>
+          <% } %>
+
+          <p><strong>Items:</strong></p>
+          <ul>
+            <% order.items.forEach(item => { %>
+              <li><%= item.product.title %> — Qty: <%= item.quantity %></li>
+            <% }) %>
+          </ul>
+
+          <% if (order.orderStatus === 'processing' || order.orderStatus === 'accepted') { %>
+            <form action="/cancel-order/<%= order._id %>" method="POST" onsubmit="return confirm('Cancel this order?')">
+              <button class="cancel-btn" type="submit">❌ Cancel Order</button>
+            </form>
+          <% } %>
+        </div>
+      <% }) %>
+    <% } %>
+  </main>
+</body>
+</html>

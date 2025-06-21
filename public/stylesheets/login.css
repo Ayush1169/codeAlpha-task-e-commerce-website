@@ -1,0 +1,84 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #000;
+  color: #fff;
+}
+
+.login-container {
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  width: 300px;
+}
+
+.login-form {
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  border: 1px solid #333;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  background-color: #333;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+.input-field:hover, .input-field:focus {
+  border-color: #3498db;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.login-button, .register-button {
+  flex: 1;
+  padding: 12px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.login-button {
+  background-color: #3498db;
+  color: #fff;
+  margin-left: 5px;
+}
+
+.login-button:hover {
+  background-color: #2980b9;
+}
+
+.register-button {
+  background-color: transparent;
+  border: 1px solid #3498db; /* Border warna button login */
+  color: #3498db;
+  margin-right: 5px;
+}
+
+.register-button:hover {
+  border-color: #2980b9; /* Warna border saat tombol di-hover */
+  color: #2980b9;
+}
+
+@media screen and (max-width: 600px) {
+  .login-container {
+    width: 90%;
+  }
+}

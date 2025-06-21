@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Profile</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <style>
+    .product-card, .order-card {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      background-color: #fdfdfd;
+    }
+    .product-card h3, .order-card h3 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .order-count {
+      color: green;
+      font-weight: bold;
+    }
+    .admin-action {
+      margin-top: 10px;
+    }
+    .location {
+      font-size: 0.9em;
+      color: #555;
+    }
+    select, button {
+      padding: 5px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Hello Admin, <%= currentUser.username %>!</h1>
+    <nav>
+      <a href="/">🏠 Home</a>
+      <a href="/new">➕ Add Product</a>
+      <a href="/logout">🚪 Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>🛍️ Products You Have Posted</h2>
+    
+    <% if (myProducts.length === 0) { %>
+      <p>You haven't posted any products yet.</p>
+    <% } else { %>
+      <% myProducts.forEach(product => { %>
+        <div class="product-card">
+          <h3><%= product.title %></h3>
+          <p><strong>Price:</strong> ₹<%= product.price %></p>
+          <p><strong>Category:</strong> <%= product.category %></p>
+          <p><strong>Orders Received:</strong> 
+            <span class="order-count"><%= productOrderCounts[product._id] || 0 %></span>
+          </p>
+        </div>
+      <% }) %>
+    <% } %>
+
+    <h2>📦 Orders</h2>
+    <% if (allOrders.length === 0) { %>
+      <p>No orders received yet.</p>
+    <% } else { %>
+      <% allOrders.forEach(order => { %>
+        <div class="order-card">
+          <h3>Order ID: <%= order._id %></h3>
+          <p><strong>User:</strong> <%= order.user?.username %></p>
+          <p><strong>Shipping Address:</strong> <%= order.shippingAddress %></p>
+          <p class="location">
+            🌍 Lat: <%= order.location.lat %> | Lng: <%= order.location.lng %>
+          </p>
+          <p><strong>Total Amount:</strong> ₹<%= order.totalAmount %></p>
+          <p><strong>Payment:</strong> <%= order.paymentStatus %></p>
+          <p><strong>Status:</strong> <%= order.orderStatus %></p>
+
+          <% if (order.orderStatus === 'processing') { %>
+            <form class="admin-action" action="/admin/order/<%= order._id %>/status" method="POST">
+              <select name="newStatus">
+                <option value="accepted">✅ Accept</option>
+                <option value="rejected">❌ Reject</option>
+              </select>
+              <button type="submit">Update</button>
+            </form>
+          <% } else if (order.orderStatus === 'accepted') { %>
+            <p><strong>🕒 Estimated Delivery:</strong> 3-5 Days (based on location)</p>
+          <% } else if (order.orderStatus === 'rejected') { %>
+            <p style="color:red;"><strong>❌ Order Rejected</strong></p>
+          <% } %>
+
+          <ul>
+            <% order.items.forEach(item => { %>
+              <li><%= item.product?.title %> — Qty: <%= item.quantity %></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% }) %>
+    <% } %>
+  </main>
+</body>
+</html>

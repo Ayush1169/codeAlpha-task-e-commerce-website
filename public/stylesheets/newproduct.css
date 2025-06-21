@@ -1,0 +1,29 @@
+.admin-post {
+  text-align: center;
+  margin: 20px;
+}
+.btn-post {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.btn-post:hover {
+  background-color: #218838;
+}
+
+.form-container {
+  max-width: 500px;
+  margin: auto;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 10px;
+}
+.form-container input,
+.form-container textarea {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 8px;
+}

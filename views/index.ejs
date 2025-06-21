@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My E-Commerce</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <header>
+    <h1>Welcome to My E-Commerce Store</h1>
+    <nav>
+      <% if (!currentUser) { %>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+      <% } else { %>
+        <span>Hello, <%= currentUser.username %></span>
+        <a href="/profile">My Profile</a> <!-- ✅ My Profile Link -->
+        <a href="/logout">Logout</a>
+      <% } %>
+
+      <!-- Flash Success Message -->
+      <% if (messages && messages.success && messages.success.length > 0) { %>
+        <div class="alert success"><%= messages.success[0] %></div>
+      <% } %>
+
+      <!-- Category Links -->
+      <a href="/category/Electronics">Electronics</a>
+      <a href="/category/Groceries">Groceries</a>
+      <a href="/category/Clothing">Clothing</a>
+      <a href="/category/Books">Books</a>
+
+      <% if (currentUser && currentUser.role === 'admin') { %>
+        <a href="/new">Post Your Product</a>
+      <% } %>
+    </nav>
+  </header>
+
+  <main>
+    <% for (let category in categorizedProducts) { %>
+      <section class="category-section" id="<%= category %>">
+        <h2><%= category %></h2>
+
+        <% if (categorizedProducts[category].length === 0) { %>
+          <p class="empty-message">No products in this category.</p>
+        <% } else { %>
+          <div class="product-container">
+            <% categorizedProducts[category].forEach(product => { %>
+              <div class="product-card">
+                <img src="/uploads/<%= product.image %>" alt="<%= product.title %>">
+                <h3><%= product.title %></h3>
+                <p>₹<%= product.price %></p>
+                <p><%= product.description %></p>
+                <p>Stock: <%= product.stock || 0 %></p>
+
+                <!-- Add to Cart Button -->
+                <form action="/add-to-cart/<%= product._id %>" method="POST" style="display:inline;">
+                  <button type="submit">Add to Cart</button>
+                </form>
+
+                <!-- Buy Now Button -->
+                <form action="/checkout/<%= product._id %>" method="get">
+                   <button type="submit">Buy Now</button>
+                </form>
+
+                <script>
+  function toggleProductDetail(orderId, i) {
+    const el = document.getElementById(`product-detail-${orderId}-${i}`);
+    el.style.display = el.style.display === 'none' || el.style.display === '' ? 'block' : 'none';
+  }
+</script>
+
+
+
+                <% if (currentUser && currentUser.role === 'admin') { %>
+                  <form action="/product/<%= product._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Are you sure?')">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                  </form>
+                <% } %>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </section>
+    <% } %>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 My E-Commerce</p>
+  </footer>
+</body>
+</html>

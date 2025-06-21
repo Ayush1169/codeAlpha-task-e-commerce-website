@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout</title>
+  <link rel="stylesheet" href="/stylesheets/checkout.css">
+</head>
+<body>
+
+  <h1>Checkout:</h1>
+
+  <img src="/uploads/<%= product.image %>" alt="<%= product.title %>" style="width: 200px;">
+  <p>Price: ₹<%= product.price %></p>
+
+  <form action="/place-order/<%= product._id %>" method="POST">
+    
+    <!-- Location Button -->
+    <button type="button" onclick="getLocation()">📍 Use Current Location</button>
+
+    <!-- Address -->
+    <label for="address">Shipping Address:</label>
+    <textarea name="address" id="address" required></textarea>
+
+    <!-- Hidden lat/lng -->
+    <input type="hidden" name="lat" id="lat">
+    <input type="hidden" name="lng" id="lng">
+
+    <!-- Payment Method -->
+    <label for="paymentMethod">Payment Method:</label>
+    <select name="paymentMethod" id="paymentMethod" required>
+      <option value="online">Online</option>
+      <option value="cash-on-delivery">Cash on Delivery</option>
+    </select>
+
+    <!-- Admin UPI Payment Details -->
+    <div id="upi-payment" style="display: none;">
+      <h3>Scan to Pay:</h3>
+      <img src="/images/qr.png" alt="Admin UPI" style="width: 200px;">
+      <p>UPI ID: <strong><%= adminUpi %></strong></p>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit">Place Order</button>
+  </form>
+
+  <script>
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async function (position) {
+          document.getElementById("lat").value = position.coords.latitude;
+          document.getElementById("lng").value = position.coords.longitude;
+
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`);
+          const data = await res.json();
+          document.getElementById("address").value = data.display_name;
+        });
+      } else {
+        alert("Geolocation not supported.");
+      }
+    }
+
+    // Show/hide UPI details
+    const paymentSelect = document.querySelector('select[name="paymentMethod"]');
+    const upiDiv = document.getElementById('upi-payment');
+
+    paymentSelect.addEventListener('change', function () {
+      if (this.value === 'online') {
+        upiDiv.style.display = 'block';
+      } else {
+        upiDiv.style.display = 'none';
+      }
+    });
+  </script>
+
+</body>
+</html>
