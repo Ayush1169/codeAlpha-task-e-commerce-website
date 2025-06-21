@@ -1,3 +1,4 @@
+/* login.css */
 
 body {
   margin: 0;
@@ -11,7 +12,6 @@ body {
   height: 100vh;
 }
 
-.login-container,
 .Register-container {
   width: 100%;
   max-width: 400px;
@@ -21,7 +21,6 @@ body {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
-.login-form,
 .Register-form {
   display: flex;
   flex-direction: column;
@@ -59,20 +58,20 @@ body {
   transition: background-color 0.3s;
 }
 
-.login-button {
-  background-color: #00bcd4;
-  color: white;
-}
-
-.login-button:hover {
-  background-color: #0097a7;
-}
-
 .register-button {
-  background-color: #424242;
+  background-color: #00c853;
   color: white;
 }
 
 .register-button:hover {
+  background-color: #00a842;
+}
+
+.login-button {
+  background-color: #424242;
+  color: white;
+}
+
+.login-button:hover {
   background-color: #616161;
 }

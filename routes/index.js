@@ -172,26 +172,51 @@ router.get('/profile', async (req, res) => {
   if (!req.isAuthenticated()) return res.redirect('/login');
 
   if (req.user.role === 'admin') {
+    // ✅ Only fetch products posted by this admin
     const myProducts = await Product.find({ uploadedBy: req.user._id });
-    const allOrders = await Order.find().populate('items.product');
-    
+
+    // ✅ Populate orders and nested uploadedBy
+    const allOrders = await Order.find().populate({
+      path: 'items.product',
+      populate: {
+        path: 'uploadedBy',
+        model: 'User'
+      }
+    });
+
     const productOrderCounts = {};
+    const relevantOrders = [];
+
     allOrders.forEach(order => {
+      let hasMyProduct = false;
+
       order.items.forEach(item => {
-        const id = item.product._id;
-        if (!productOrderCounts[id]) productOrderCounts[id] = 0;
-        productOrderCounts[id] += item.quantity;
+        if (
+          item.product &&
+          item.product.uploadedBy &&
+          item.product.uploadedBy._id &&
+          item.product.uploadedBy._id.toString() === req.user._id.toString()
+        ) {
+          hasMyProduct = true;
+
+          const id = item.product._id;
+          if (!productOrderCounts[id]) productOrderCounts[id] = 0;
+          productOrderCounts[id] += item.quantity;
+        }
       });
+
+      if (hasMyProduct) relevantOrders.push(order);
     });
 
     res.render('profile_admin', {
       currentUser: req.user,
       myProducts,
       productOrderCounts,
-      allOrders 
+      allOrders: relevantOrders // ✅ You can use this if you want admin to see/manage orders
     });
 
   } else {
+    // ✅ For normal users
     const myOrders = await Order.find({ user: req.user._id }).populate('items.product');
     res.render('profile_user', {
       currentUser: req.user,
@@ -200,6 +225,7 @@ router.get('/profile', async (req, res) => {
     });
   }
 });
+
 
 router.get('/checkout/:id', async (req, res) => {
   if (!req.isAuthenticated()) return res.redirect('/login')
